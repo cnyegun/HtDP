@@ -3,4 +3,5 @@
 
 This repo serves as a personal log when I'm going through the How to Design Program book and the course Systematic Program Design
 
+Following https://learnaifromscratch.github.io/accelerated.html
 ... continues
