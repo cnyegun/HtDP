@@ -3,5 +3,6 @@
 
 This repo serves as a personal log when I'm going through the How to Design Program book and the course Systematic Program Design
 
-Following https://learnaifromscratch.github.io/accelerated.html
+Following https://learnaifromscratch.github.io/accelerated.html <br>
+Currently doing https://learning.edx.org/course/course-v1:UBCx+SPD1x+2T2015/ course (archived, view only)
 ... continues
