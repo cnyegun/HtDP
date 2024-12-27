@@ -44,7 +44,6 @@
 ;; interp. each TA slot has a number, is the same length, and none overlap
 
 (define-struct ta (name max avail))
-
 ;; TA is (make-ta String Natural (listof Slot))
 ;; interp. the TA's name, number of slots they can work, and slots they're available for
 
