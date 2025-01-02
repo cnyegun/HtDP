@@ -157,20 +157,75 @@
 ;; produce the next state of game
 
 (define (tock g)
-  (collision (make-game (next-invaders (game-invaders g))
+  (collision (make-game (next-invaders (spawn (game-invaders g)))
                         (advance-missiles (game-missiles g) (game-invaders g))
                         (advance-tank (game-tank g)))))
 
 ;; TODO:
-;;  - Random invader
+;;  - Random invader (spawn )
 ;;  - Handle collision
 
 ;; Game -> Game
 ;; remove all the collision of missiles and invaders
-;; !!!
-(define (collision g) g)
+
+(define (collision g)
+  (make-game (invaders-col (game-invaders g) (game-missiles g))
+             (missiles-col (game-missiles g) (game-invaders g))
+             (game-tank g)))
+
+;; ListOfMissile ListOfInvader -> ListOfMissile
+;; produce new missile, remove collision
+
+(define (missiles-col lom loi)
+  (cond [(empty? lom) empty]
+        [else
+         (if  (collide-vs-invaders (first lom) loi)
+              (missiles-col (rest lom) loi)
+              (cons (first lom) (missiles-col (rest lom) loi)))]))
+
+;; Missile ListOfInvader -> ListOfMissile
+(define (collide-vs-invaders m loi)
+  (cond [(empty? loi) false]
+        [else
+         (if (collide-vs-missile? (first loi) m)
+             true
+             (collide-vs-invaders m (rest loi)))]))
+
+
+;; ListOfInvader ListOfMissile -> ListOfInvader
+;; produce new invaders, remove collision
+
+(define (invaders-col loi lom)
+  (cond [(empty? loi) empty]
+        [else
+         (if  (collide-vs-missiles? (first loi) lom)
+              (invaders-col (rest loi) lom)
+              (cons (first loi) (invaders-col (rest loi) lom)))]))
+
+;; Invader ListOfMissiles -> Boolean
+;; produce true if one of missile hit invader
+
+(define (collide-vs-missiles? i lom)
+  (cond [(empty? lom) false]
+        [else
+         (if (collide-vs-missile? i (first lom))
+             true
+             (collide-vs-missiles? i (rest lom)))]))
+;; Invader Missile -> Boolean
+;; produce true if delta x and delta y is smaller than HIT-RANGE
+(define (collide-vs-missile? i m)
+  (and (< (abs (- (invader-x i) (missile-x m))) HIT-RANGE)
+       (< (abs (- (invader-y i) (missile-y m))) HIT-RANGE)))
 
 ;======================================================================================
+
+;; ListOfInvader -> ListOfInvader
+;; randomly spawn new invader
+
+(define (spawn loi)
+  (if (= (random 30) 15)
+      (cons (make-invader (random WIDTH) 0 INVADER-X-SPEED) loi)
+      loi))
 
 ;; ListOfInvader -> ListOfInvader
 ;; produce the next position of the Invader, change dx if needed
