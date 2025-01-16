@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-reader.ss" "lang")((modname parameterization-starter) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname parameterization-starter) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; parameterization-starter.rkt
 
 (* pi (sqr 4)) ;area of circle radius 4
@@ -11,16 +11,16 @@
 
 ;; ListOfString -> Boolean
 ;; produce true if los includes "UBC"
-(check-expect (contains? "UBC" empty) false)
-(check-expect (contains? "UBC" (cons "McGill" empty)) false)
-(check-expect (contains? "UBC" (cons "UBC" empty)) true)
-(check-expect (contains? "UBC" (cons "McGill" (cons "UBC" empty))) true)
+(check-expect (contains-ubc? empty) false)
+(check-expect (contains-ubc? (cons "McGill" empty)) false)
+(check-expect (contains-ubc? (cons "UBC" empty)) true)
+(check-expect (contains-ubc? (cons "McGill" (cons "UBC" empty))) true)
 
 ;(define (contains-ubc? los) false) ;stub
 
 ;<template from ListOfString>
 
-#;(define (contains-ubc? los)
+(define (contains-ubc? los)
   (cond [(empty? los) false]
         [else
          (if (string=? (first los) "UBC")
@@ -29,30 +29,22 @@
 
 ;; ListOfString -> Boolean
 ;; produce true if los includes "McGill"
-(check-expect (contains? "McGill" empty) false)
-(check-expect (contains? "McGill" (cons "UBC" empty)) false)
-(check-expect (contains? "McGill" (cons "McGill" empty)) true)
-(check-expect (contains? "McGill" (cons "UBC" (cons "McGill" empty))) true)
+(check-expect (contains-mcgill? empty) false)
+(check-expect (contains-mcgill? (cons "UBC" empty)) false)
+(check-expect (contains-mcgill? (cons "McGill" empty)) true)
+(check-expect (contains-mcgill? (cons "UBC" (cons "McGill" empty))) true)
 
 ;(define (contains-mcgill? los) false) ;stub
 
 ;<template from ListOfString>
 
-#;(define (contains-mcgill? los)
+(define (contains-mcgill? los)
   (cond [(empty? los) false]
         [else
          (if (string=? (first los) "McGill")
              true
              (contains-mcgill? (rest los)))]))
 
-;; String ListOfString -> Boolean
-
-(define (contains? name los)
-  (cond [(empty? los) false]
-        [else
-         (if (string=? (first los) name)
-             true
-             (contains? name (rest los)))]))
 
 ;; ====================
 
@@ -98,7 +90,13 @@
 
 ;<template from ListOfNumber>
 
-(define (positive-only lon) (only positive? lon))
+(define (positive-only lon)
+  (cond [(empty? lon) empty]
+        [else
+         (if (positive? (first lon))
+             (cons (first lon)
+                   (positive-only (rest lon)))
+             (positive-only (rest lon)))]))
 
 
 ;; ListOfNumber -> ListOfNumber
@@ -110,12 +108,10 @@
 
 ;<template from ListOfNumber>
 
-(define (negative-only lon) (only negative? lon))
-
-(define (only fn lon)
+(define (negative-only lon)
   (cond [(empty? lon) empty]
         [else
-         (if (fn (first lon))
+         (if (negative? (first lon))
              (cons (first lon)
-                   (only fn (rest lon)))
-             (only fn (rest lon)))]))
+                   (negative-only (rest lon)))
+             (negative-only (rest lon)))]))
